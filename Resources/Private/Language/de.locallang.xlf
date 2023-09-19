@@ -105,19 +105,19 @@
 			</trans-unit>
 			<trans-unit id="tx_pwcomments.thanks" xml:space="preserve" approved="yes">
 				<source>Thanks for your comment!</source>
-				<target>Vielen Dank für Deinen Kommentar!</target>
+				<target>Vielen Dank für Ihren Kommentar!</target>
 			</trans-unit>
 			<trans-unit id="tx_pwcomments.updateSuccess" xml:space="preserve">
 				<source>Your comment has been successfully edited!</source>
-				<target>Dein Kommentar wurde erfolgreich bearbeitet!</target>
+				<target>Ihr Kommentar wurde erfolgreich bearbeitet!</target>
 			</trans-unit>
 			<trans-unit id="tx_pwcomments.editComment" xml:space="preserve">
 				<source>Edit your comment</source>
-				<target>Deinen Kommentar bearbeiten</target>
+				<target>Ihren Kommentar bearbeiten</target>
 			</trans-unit>
 			<trans-unit id="tx_pwcomments.moderationNotice" xml:space="preserve" approved="yes">
 				<source>Your comment has to be checked before publishing. Thank you for your patience!</source>
-				<target>Vielen Dank für Deinen Kommentar! Wir werden ihn vor der Veröffentlichung prüfen. Danke für Deine Geduld!</target>
+				<target>Vielen Dank für Ihren Kommentar! Wir werden ihn vor der Veröffentlichung prüfen. Danke für Ihre Geduld!</target>
 			</trans-unit>
 			<trans-unit id="tx_pwcomments.relativeDate.wrap" xml:space="preserve" approved="yes">
 				<source>%s ago</source>
