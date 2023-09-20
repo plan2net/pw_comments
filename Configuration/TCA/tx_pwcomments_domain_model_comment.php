@@ -16,7 +16,7 @@ $ll = 'LLL:EXT:pw_comments/Resources/Private/Language/locallang_db.xlf:';
 return [
     'ctrl' => [
         'title' => $ll . 'tx_pwcomments_domain_model_comment',
-        'label' => 'author_name',
+        'label' => 'message',
         'tstamp' => 'tstamp',
         'crdate' => 'crdate',
         'versioningWS' => 2,
@@ -33,10 +33,10 @@ return [
     ],
     'types' => [
         '1' => ['showitem' => 'hidden,author,author_name,author_mail,author_website,author_ident,terms_accepted,' .
-                              'message,parent_comment,votes']
+                              'entry_uid,message,parent_comment,votes,crdate,tstamp']
     ],
     'palettes' => [
-        '1' => ['showitem' => '']
+        '1' => ['showitem' => 'message']
     ],
     'columns' => [
         'sys_language_uid' => [
@@ -91,14 +91,18 @@ return [
             'exclude' => 0,
             'label' => $ll . 'general.crdate',
             'config' => [
-                'type' => 'input'
+                'type' => 'input',
+                'renderType' => 'inputDateTime',
+                'eval' => 'datetime',
             ]
         ],
         'tstamp' => [
             'exclude' => 0,
             'label' => $ll . 'general.tstamp',
             'config' => [
-                'type' => 'input'
+                'type' => 'input',
+                'renderType' => 'inputDateTime',
+                'eval' => 'datetime',
             ]
         ],
         'hidden' => [
@@ -119,7 +123,13 @@ return [
             'exclude' => 0,
             'label' => $ll . 'tx_pwcomments_domain_model_comment.entry_uid',
             'config' => [
-                'type' => 'input'
+                'type' => 'group',
+                'internal_type' => 'db',
+                'allowed' => 'tx_news_domain_model_news',
+                'show_thumbs' => 1,
+                'size' => 1,
+                'minitems' => 0,
+                'maxitems' => 1
             ]
         ],
         'parent_comment' => [
