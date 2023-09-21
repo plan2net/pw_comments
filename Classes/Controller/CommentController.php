@@ -501,29 +501,26 @@ class CommentController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControll
     public function deleteAction(string $commentUid): void
     {
         $comment = $this->commentRepository->findByCommentUid($commentUid);
-        $dataHandler = GeneralUtility::makeInstance(DataHandler::class);
         if (null !== $comment) {
             $votes = $comment->getVotes()->toArray();
             if (!empty($votes)) {
                 foreach ($votes as $vote) {
-                    $cmd['tx_pwcomments_domain_model_vote'][$vote->getUid()]['delete'] = 1;
+                    $this->commentRepository->remove($vote);
                 }
             }
             $replies = $comment->getReplies()->toArray();
             if ($replies !== null) {
                 foreach ($replies as $reply) {
-                    $cmd['tx_pwcomments_domain_model_comment'][$reply->getUid()]['delete'] = 1;
+                    $this->commentRepository->remove($reply);
                     $replyVotes = $reply->getVotes()->toArray();
                     if (!empty($replyVotes)) {
                         foreach ($replyVotes as $replyVote) {
-                            $cmd['tx_pwcomments_domain_model_vote'][$replyVote->getUid()]['delete'] = 1;
+                            $this->commentRepository->remove($replyVote);
                         }
                     }
                 }
             }
-            $cmd['tx_pwcomments_domain_model_comment'][$comment->getUid()]['delete'] = 1;
-            $dataHandler->start([], $cmd);
-            $dataHandler->process_cmdmap();
+            $this->commentRepository->remove($comment);
             $this->addFlashMessage(
                 LocalizationUtility::translate('tx_pwcomments.custom.deletedComment', 'PwComments')
             );
