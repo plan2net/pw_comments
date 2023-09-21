@@ -500,16 +500,16 @@ class CommentController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControll
      */
     public function deleteAction(string $commentUid): void
     {
-        $commentWithReplies = $this->commentRepository->findByCommentUid($commentUid);
+        $comment = $this->commentRepository->findByCommentUid($commentUid);
         $dataHandler = GeneralUtility::makeInstance(DataHandler::class);
-        if (null !== $commentWithReplies) {
-            $votes = $commentWithReplies->getVotes()->toArray();
+        if (null !== $comment) {
+            $votes = $comment->getVotes()->toArray();
             if (!empty($votes)) {
                 foreach ($votes as $vote) {
                     $cmd['tx_pwcomments_domain_model_vote'][$vote->getUid()]['delete'] = 1;
                 }
             }
-            $replies = $commentWithReplies->getReplies()->toArray();
+            $replies = $comment->getReplies()->toArray();
             if ($replies !== null) {
                 foreach ($replies as $reply) {
                     $cmd['tx_pwcomments_domain_model_comment'][$reply->getUid()]['delete'] = 1;
@@ -521,7 +521,7 @@ class CommentController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControll
                     }
                 }
             }
-            $cmd['tx_pwcomments_domain_model_comment'][$commentWithReplies->getUid()]['delete'] = 1;
+            $cmd['tx_pwcomments_domain_model_comment'][$comment->getUid()]['delete'] = 1;
             $dataHandler->start([], $cmd);
             $dataHandler->process_cmdmap();
             $this->addFlashMessage(

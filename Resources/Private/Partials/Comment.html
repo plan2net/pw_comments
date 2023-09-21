@@ -57,7 +57,7 @@
 			<f:if condition="{comment.authorIdent} == {userIdent}">
 				<f:then>
 					<f:if condition="{settings.enableEditingComments}">
-						<f:link.action class="edit" action="edit" arguments="{updateComment: comment}" addQueryString="true">
+						<f:link.action class="edit" action="edit" arguments="{updateComment: comment}"  section="{settings.updateCommentAnchor}" addQueryString="true">
 							<f:translate key="tx_pwcomments.edit" />
 						</f:link.action>
 					</f:if>
