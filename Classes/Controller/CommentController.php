@@ -287,6 +287,8 @@ class CommentController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControll
 
         $this->commentRepository->add($newComment);
         $this->getPersistenceManager()->persistAll();
+        $newsRepository = GeneralUtility::makeInstance(NewsRepository::class);
+        $news = $newsRepository->findByUid($newComment->getEntryUid());
 
         if (isset($this->settings['sendMailOnNewCommentsToNewsAuthor']) && $this->settings['sendMailOnNewCommentsToNewsAuthor']) {
             $newsRepository = GeneralUtility::makeInstance(NewsRepository::class);
@@ -295,6 +297,7 @@ class CommentController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControll
             $this->mailUtility->setControllerContext($this->controllerContext);
             $this->mailUtility->setReceivers($news->getAuthorEmail());
             $this->mailUtility->setTemplatePath($this->settings['sendMailNewsAuthorTemplate']);
+            $this->mailUtility->setSubjectLocallangKey('tx_pwcomments.notificationMail.subject');
             $this->mailUtility->sendMail($newComment, HashEncryptionUtility::createHashForComment($newComment));
         }
 
@@ -302,7 +305,8 @@ class CommentController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControll
             $this->mailUtility->setFluidTemplate($this->makeFluidTemplateObject());
             $this->mailUtility->setControllerContext($this->controllerContext);
             $this->mailUtility->setReceivers($this->settings['sendMailOnNewCommentsTo']);
-            $this->mailUtility->setTemplatePath($this->settings['sendMailTemplate']);
+            $this->mailUtility->setTemplatePath($news === null ? $this->settings['sendMailTemplate'] : $this->settings['sendMailNewsAuthorTemplate']);
+            $this->mailUtility->setSubjectLocallangKey('tx_pwcomments.notificationMail.subject');
             $this->mailUtility->sendMail($newComment, HashEncryptionUtility::createHashForComment($newComment));
         }
 

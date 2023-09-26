@@ -26,7 +26,7 @@ class StringUtility
     {
         return preg_replace(
             '/(((http(s)?\:\/\/)|(www\.))([^\s]+[^\.\s]+))/',
-            '<a href="http$4://$5$6">$1</a>',
+            '<a href="http$4://$5$6" target="_blank">$1</a>',
             $value
         );
     }
