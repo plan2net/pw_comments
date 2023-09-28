@@ -91,6 +91,11 @@ class CommentController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControll
     protected $voteRepository;
 
     /**
+     * @var NewsRepository
+     */
+    protected $newsRepository;
+
+    /**
      * @var int
      */
     protected $commentStorageUid;
@@ -124,6 +129,11 @@ class CommentController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControll
     public function injectVoteRepository(VoteRepository $voteRepository): void
     {
         $this->voteRepository = $voteRepository;
+    }
+
+    public function injectNewsRepository(NewsRepository $newsRepository): void
+    {
+        $this->newsRepository = $newsRepository;
     }
 
     /**
@@ -214,6 +224,10 @@ class CommentController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControll
                 }
             }
         }
+        $news = $this->newsRepository->findByUid($this->entryUid);
+        if ($news) {
+            $this->view->assign('news', $news);
+        }
 
         $this->view->assign('upvotedCommentUids', $upvotedCommentUids);
         $this->view->assign('downvotedCommentUids', $downvotedCommentUids);
@@ -288,11 +302,11 @@ class CommentController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControll
         $this->commentRepository->add($newComment);
         $this->getPersistenceManager()->persistAll();
         $newsRepository = GeneralUtility::makeInstance(NewsRepository::class);
-        $news = $newsRepository->findByUid($newComment->getEntryUid());
+        $news = $this->newsRepository->findByUid($newComment->getEntryUid());
 
         if (isset($this->settings['sendMailOnNewCommentsToNewsAuthor']) && $this->settings['sendMailOnNewCommentsToNewsAuthor']) {
             $newsRepository = GeneralUtility::makeInstance(NewsRepository::class);
-            $news = $newsRepository->findByUid($newComment->getEntryUid());
+            $news = $this->newsRepository->findByUid($newComment->getEntryUid());
             $this->mailUtility->setFluidTemplate($this->makeFluidTemplateObject());
             $this->mailUtility->setControllerContext($this->controllerContext);
             $this->mailUtility->setReceivers($news->getAuthorEmail());
@@ -364,6 +378,11 @@ class CommentController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControll
 
         $this->view->assign('unregisteredUserName', $unregisteredUserName);
         $this->view->assign('unregisteredUserMail', $unregisteredUserMail);
+
+        $news = $this->newsRepository->findByUid($this->entryUid);
+        if ($news) {
+            $this->view->assign('news', $news);
+        }
     }
 
     /**
@@ -396,6 +415,11 @@ class CommentController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControll
 
         $this->view->assign('unregisteredUserName', $unregisteredUserName);
         $this->view->assign('unregisteredUserMail', $unregisteredUserMail);
+
+        $news = $this->newsRepository->findByUid($this->entryUid);
+        if ($news) {
+            $this->view->assign('news', $news);
+        }
     }
 
     /**
@@ -450,12 +474,12 @@ class CommentController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControll
         $this->commentRepository->update($updateComment);
         $this->getPersistenceManager()->persistAll();
         $newsRepository = GeneralUtility::makeInstance(NewsRepository::class);
-        $news = $newsRepository->findByUid($updateComment->getEntryUid());
+        $news = $this->newsRepository->findByUid($updateComment->getEntryUid());
 
 
         if (isset($this->settings['sendMailOnNewCommentsToNewsAuthor']) && $this->settings['sendMailOnNewCommentsToNewsAuthor']) {
             $newsRepository = GeneralUtility::makeInstance(NewsRepository::class);
-            $news = $newsRepository->findByUid($updateComment->getEntryUid());
+            $news = $this->newsRepository->findByUid($updateComment->getEntryUid());
             $this->mailUtility->setFluidTemplate($this->makeFluidTemplateObject());
             $this->mailUtility->setControllerContext($this->controllerContext);
             $this->mailUtility->setReceivers($news->getAuthorEmail());
