@@ -19,7 +19,6 @@ use T3\PwComments\Utility\HashEncryptionUtility;
 use T3\PwComments\Utility\Mail;
 use T3\PwComments\Utility\Settings;
 use T3\PwComments\Utility\StringUtility;
-use TYPO3\CMS\Core\DataHandling\DataHandler;
 use TYPO3\CMS\Core\Messaging\FlashMessage;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Domain\Model\FrontendUser;
@@ -131,10 +130,6 @@ class CommentController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControll
         $this->voteRepository = $voteRepository;
     }
 
-    public function injectNewsRepository(NewsRepository $newsRepository): void
-    {
-        $this->newsRepository = $newsRepository;
-    }
 
     /**
      * Initialize action, which will be executed before every
@@ -177,6 +172,8 @@ class CommentController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControll
         if (isset($this->settings['useEntryUid']) && $this->settings['useEntryUid']) {
             $this->entryUid = (int)$this->settings['entryUid'];
         }
+
+        $this->newsRepository = GeneralUtility::makeInstance(NewsRepository::class);
     }
 
     /**
@@ -301,12 +298,9 @@ class CommentController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControll
 
         $this->commentRepository->add($newComment);
         $this->getPersistenceManager()->persistAll();
-        $newsRepository = GeneralUtility::makeInstance(NewsRepository::class);
         $news = $this->newsRepository->findByUid($newComment->getEntryUid());
 
-        if (isset($this->settings['sendMailOnNewCommentsToNewsAuthor']) && $this->settings['sendMailOnNewCommentsToNewsAuthor']) {
-            $newsRepository = GeneralUtility::makeInstance(NewsRepository::class);
-            $news = $this->newsRepository->findByUid($newComment->getEntryUid());
+        if (isset($this->settings['sendMailOnNewCommentsToNewsAuthor']) && $this->settings['sendMailOnNewCommentsToNewsAuthor'] && $news !== null) {
             $this->mailUtility->setFluidTemplate($this->makeFluidTemplateObject());
             $this->mailUtility->setControllerContext($this->controllerContext);
             $this->mailUtility->setReceivers($news->getAuthorEmail());
@@ -473,13 +467,10 @@ class CommentController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControll
 
         $this->commentRepository->update($updateComment);
         $this->getPersistenceManager()->persistAll();
-        $newsRepository = GeneralUtility::makeInstance(NewsRepository::class);
         $news = $this->newsRepository->findByUid($updateComment->getEntryUid());
 
 
-        if (isset($this->settings['sendMailOnNewCommentsToNewsAuthor']) && $this->settings['sendMailOnNewCommentsToNewsAuthor']) {
-            $newsRepository = GeneralUtility::makeInstance(NewsRepository::class);
-            $news = $this->newsRepository->findByUid($updateComment->getEntryUid());
+        if (isset($this->settings['sendMailOnNewCommentsToNewsAuthor']) && $this->settings['sendMailOnNewCommentsToNewsAuthor'] && $news !== null) {
             $this->mailUtility->setFluidTemplate($this->makeFluidTemplateObject());
             $this->mailUtility->setControllerContext($this->controllerContext);
             $this->mailUtility->setReceivers($news->getAuthorEmail());
