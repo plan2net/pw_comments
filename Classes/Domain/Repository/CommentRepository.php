@@ -1,4 +1,5 @@
 <?php
+
 namespace T3\PwComments\Domain\Repository;
 
 /*  | This extension is made for TYPO3 CMS and is licensed
@@ -8,6 +9,7 @@ namespace T3\PwComments\Domain\Repository;
  *  |     2015 Dennis Roemmich <dennis@roemmich.eu>
  *  |     2016-2017 Christian Wolfram <c.wolfram@chriwo.de>
  */
+
 use TYPO3\CMS\Extbase\Object\ObjectManagerInterface;
 use TYPO3\CMS\Extbase\Persistence\Generic\Typo3QuerySettings;
 use TYPO3\CMS\Extbase\Persistence\Generic\QueryResult;
@@ -44,6 +46,13 @@ class CommentRepository extends Repository
         /** @var Typo3QuerySettings $querySettings */
         $querySettings = $this->objectManager->get(Typo3QuerySettings::class);
         $querySettings->setRespectStoragePage(false);
+        // https://redmine.plan2.net/issues/35046
+        // Due to an issue where the sys_language_uid is not being set locally.
+        // We currently, ignoring the sys_language_uid field.
+        // As a result, all comments are displayed in all languages, regardless of their intended language context.
+        // This solution is not ideal, but it is approved by the PM.
+        // We will fix this during the next TYPO3 upgrade.
+        $querySettings->setRespectSysLanguage(false);
         $this->setDefaultQuerySettings($querySettings);
     }
 
@@ -70,6 +79,7 @@ class CommentRepository extends Repository
         foreach ($comments as $comment) {
             $this->findAndAttachCommentReplies($comment);
         };
+
         return $comments;
     }
 
@@ -88,16 +98,18 @@ class CommentRepository extends Repository
                 [
                     $query->equals('pid', $pid),
                     $query->equals('entryUid', $entryUid),
-                    $query->equals('parentComment', 0)
+                    $query->equals('parentComment', 0),
                 ]
             )
         );
+
         $query->setOrderings(['crdate' => $this->getCommentSortingDirection()]);
         $comments = $query->execute();
 
         foreach ($comments as $comment) {
             $this->findAndAttachCommentReplies($comment);
-        };
+        }
+
         return $comments;
     }
 
@@ -118,6 +130,7 @@ class CommentRepository extends Repository
         if ($comment) {
             $this->findAndAttachCommentReplies($comment);
         }
+
         return $comment;
     }
 
@@ -147,6 +160,7 @@ class CommentRepository extends Repository
         if ($this->getInvertCommentSorting() === true) {
             return QueryInterface::ORDER_DESCENDING;
         }
+
         return QueryInterface::ORDER_ASCENDING;
     }
 
@@ -181,6 +195,7 @@ class CommentRepository extends Repository
         if ($this->getInvertReplySorting() === true) {
             return QueryInterface::ORDER_DESCENDING;
         }
+
         return QueryInterface::ORDER_ASCENDING;
     }
 
