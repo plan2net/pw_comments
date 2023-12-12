@@ -295,6 +295,7 @@ class CommentController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControll
                 LocalizationUtility::translate('tx_pwcomments.thanks', 'PwComments', $translateArguments)
             );
         }
+        $GLOBALS['TSFE']->sys_language_uid = $GLOBALS['TSFE']->language->getLanguageId();
 
         $this->commentRepository->add($newComment);
         $this->getPersistenceManager()->persistAll();
