@@ -67,6 +67,7 @@ plugin.tx_pwcomments {
 		sendMailToAuthorAfterSubmitUpdateTemplate = {$plugin.tx_pwcomments.settings.sendMailToAuthorAfterSubmitUpdateTemplate}
 		sendMailToAuthorAfterPublish = {$plugin.tx_pwcomments.settings.sendMailToAuthorAfterPublish}
 		sendMailToAuthorAfterPublishTemplate = {$plugin.tx_pwcomments.settings.sendMailToAuthorAfterPublishTemplate}
+		sendMailOnNewCommentsOnCommentsToOriginalAuthor = {$plugin.tx_pwcomments.settings.sendMailOnNewCommentsOnCommentsToOriginalAuthor}
 		sitenameUsedInMails = {$plugin.tx_pwcomments.settings.sitenameUsedInMails}
 
 		secondsBetweenTwoComments = {$plugin.tx_pwcomments.settings.secondsBetweenTwoComments}

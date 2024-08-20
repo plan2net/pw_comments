@@ -27,6 +27,7 @@ sendMailToAuthorAfterPublishTemplate_        string
 sendMailOnNewCommentsToNewsAuthor_           boolean
 sendMailNewsAuthorTemplate_                  string
 sendMailNewsAuthorUpdateTemplate_            string
+sendMailOnNewCommentsOnCommentsToOriginalAuthor_ boolean
 sitenameUsedInMails_                         string
 =====================================       ========
 
@@ -175,7 +176,18 @@ sendMailToAuthorAfterSubmitTemplate
    Description
       Defines the path to the Fluid template which should be used for the e-mail to comment author.
 
+.. _sendMailOnNewCommentsOnCommentsToOriginalAuthor:
 
+sendMailOnNewCommentsOnCommentsToOriginalAuthor
+"""""""""""""""""""
+.. container:: table-row
+
+   Property
+      sendMailOnNewCommentsOnCommentsToOriginalAuthor
+   Data type
+      boolean
+   Description
+      If this option is enabled, the author of the parent comment receives a mail after a comment has been published.
 
 .. _sitenameUsedInMails:
 

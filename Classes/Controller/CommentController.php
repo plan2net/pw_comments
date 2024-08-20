@@ -300,6 +300,24 @@ class CommentController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControll
         $this->getPersistenceManager()->persistAll();
         $news = $this->newsRepository->findByUid($newComment->getEntryUid());
 
+        if (isset($this->settings['sendMailOnNewCommentsOnCommentsToOriginalAuthor']) && $this->settings['sendMailOnNewCommentsOnCommentsToOriginalAuthor'] === '1') {
+            $this->mailUtility->setFluidTemplate($this->makeFluidTemplateObject());
+            $this->mailUtility->setControllerContext($this->controllerContext);
+
+            $parentComment = $newComment->getParentComment();
+            $parentCommentAuthorMail = null;
+            if ($parentComment !== null && $newComment->getAuthor()->getUid() !== $parentComment->getAuthor()->getUid()) {
+                $parentCommentAuthorMail = $parentComment->getAuthor()->getEmail();
+            }
+
+            if (!empty($parentCommentAuthorMail)) {
+                $this->mailUtility->setReceivers($parentCommentAuthorMail);
+                $this->mailUtility->setTemplatePath($news === null ? $this->settings['sendMailTemplate'] : $this->settings['sendMailNewsAuthorTemplate']);
+                $this->mailUtility->setSubjectLocallangKey('tx_pwcomments.notificationMail.subject');
+                $this->mailUtility->sendMail($newComment, HashEncryptionUtility::createHashForComment($newComment));
+            }
+        }
+
         if (isset($this->settings['sendMailOnNewCommentsToNewsAuthor']) && $this->settings['sendMailOnNewCommentsToNewsAuthor'] && $news !== null) {
             $this->mailUtility->setFluidTemplate($this->makeFluidTemplateObject());
             $this->mailUtility->setControllerContext($this->controllerContext);
@@ -469,6 +487,23 @@ class CommentController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControll
         $this->getPersistenceManager()->persistAll();
         $news = $this->newsRepository->findByUid($updateComment->getEntryUid());
 
+        if (isset($this->settings['sendMailOnNewCommentsOnCommentsToOriginalAuthor']) && $this->settings['sendMailOnNewCommentsOnCommentsToOriginalAuthor'] === '1') {
+            $this->mailUtility->setFluidTemplate($this->makeFluidTemplateObject());
+            $this->mailUtility->setControllerContext($this->controllerContext);
+
+            $parentComment = $updateComment->getParentComment();
+            $parentCommentAuthorMail = null;
+            if ($parentComment !== null && $updateComment->getAuthor()->getUid() !== $parentComment->getAuthor()->getUid()) {
+                $parentCommentAuthorMail = $parentComment->getAuthor()->getEmail();
+            }
+
+            if (!empty($parentCommentAuthorMail)) {
+                $this->mailUtility->setReceivers($parentCommentAuthorMail);
+                $this->mailUtility->setTemplatePath($news === null ? $this->settings['sendMailUpdateTemplate'] : $this->settings['sendMailNewsAuthorUpdateTemplate']);
+                $this->mailUtility->setSubjectLocallangKey('tx_pwcomments.notificationMail.update.subject');
+                $this->mailUtility->sendMail($updateComment, HashEncryptionUtility::createHashForComment($updateComment));
+            }
+        }
 
         if (isset($this->settings['sendMailOnNewCommentsToNewsAuthor']) && $this->settings['sendMailOnNewCommentsToNewsAuthor'] && $news !== null) {
             $this->mailUtility->setFluidTemplate($this->makeFluidTemplateObject());
